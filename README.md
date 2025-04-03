@@ -6,11 +6,15 @@ Once you've cloned the repository, you must follow these steps to run the app in
 * Move to the project's folder with `cd fruit-lens`
 * Install the needed dependencies with the following commands: [^1]
  ```
-    npm install react-native-paper
-    npm install @react-navigation/native
-    npm install @react-navigation/stack
+    npx expo install react-native-paper
+    npx expo install @react-navigation/native
+    npx expo install @react-navigation/stack
     npx expo install expo-camera
-    npm install react-native-screens@4.4.0 react-native-safe-area-context@4.12.0 react-native-gesture-handler@2.20.2 react-native-reanimated@3.16.1 react-native-vector-icons
+    npx expo install react-native-screens
+    npx expo install react-native-safe-area-context
+    npx expo install react-native-gesture-handler
+    npx expo install react-native-reanimated
+    npm install react-native-vector-icons
   ```
 * Once the libraries have been installed, execute `npm start` to run the app
 * Scan the QR code with Expo Go
