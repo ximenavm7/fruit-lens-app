@@ -5,28 +5,27 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const FruitResultsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { fruit, image, status, daysLeft, recipes } = route.params;
+  const { fruit, status, className, daysLeft, recipes, imageUri } = route.params;
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Botón "Go Back" con icono */}
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
           <Image source={require('../assets/logo.png')} style={styles.backIcon} />
           <Text style={styles.backText}>Go back</Text>
         </TouchableOpacity>
 
-        {/* Imagen de la fruta */}
-        <Image source={image} style={styles.image} />
+        {/* Display the captured image */}
+        <Image source={{ uri: imageUri }} style={styles.image} />
 
-        {/* Nombre de la fruta */}
+        {/* Display the fruit name */}
         <Text style={styles.title}>{fruit}</Text>
 
-        {/* Caja con la información del estado */}
+        {/* Info box with class, days left, and recipes */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>State: {status}</Text>
-          <Text style={styles.infoText}>Time left: {daysLeft} days</Text>
-          <Text style={styles.infoText}>Recipes:</Text>
+          <Text style={styles.infoText}>Class: {fruit} & {status}</Text>
+          <Text style={recipes.length > 0 ? styles.infoText : styles.infoText}>Time left: {daysLeft}</Text>
+          <Text style={recipes.length > 0 ? styles.infoText : styles.infoText}>Recipes:</Text>
           {recipes.map((recipe, index) => (
             <Text key={index} style={styles.recipeText}>• {recipe}</Text>
           ))}

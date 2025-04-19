@@ -1,25 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const ErrorResultsScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { error } = route.params || {};
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Botón "Go Back" con icono */}
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
           <Image source={require('../assets/logo.png')} style={styles.backIcon} />
           <Text style={styles.backText}>Go back</Text>
         </TouchableOpacity>
 
-        {/* Imagen de error */}
         <Image source={require('../assets/error-icon.png')} style={styles.image} />
 
-        {/* Mensaje de error */}
         <Text style={styles.errorText}>Oops!</Text>
-        <Text style={styles.description}>Something went wrong with the fruit...</Text>
+        <Text style={styles.description}>{error || 'Something went wrong with the fruit...'}</Text>
         <Text style={styles.description}>Please try again</Text>
       </View>
     </View>
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#4CAF50', // Fondo verde
+    backgroundColor: '#4CAF50',
     padding: 5,
   },
   innerContainer: {
