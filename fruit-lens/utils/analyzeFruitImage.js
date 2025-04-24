@@ -1,9 +1,10 @@
+
+
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// Replace with your actual Roboflow API key
-const API_KEY = "8gyDNXONTpiXI6Dd0Z52"; // Your API key
+const API_KEY = "8gyDNXONTpiXI6Dd0Z52";
 const API_URL = "https://serverless.roboflow.com/fruits-quality-jhcct/1";
 
 const analyzeFruitImage = async (imageUri) => {
@@ -11,19 +12,16 @@ const analyzeFruitImage = async (imageUri) => {
     let base64Image;
 
     if (Platform.OS === 'web') {
-      // On web (not used since you're focusing on phone app)
       base64Image = imageUri.split(',')[1];
       if (!base64Image) {
         throw new Error('Invalid image data URL');
       }
     } else {
-      // On native, convert the image file to base64
       base64Image = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
     }
 
-    // Send to Roboflow API using axios
     const response = await axios({
       method: "POST",
       url: API_URL,
@@ -36,9 +34,23 @@ const analyzeFruitImage = async (imageUri) => {
       },
     });
 
-    return response.data.predictions; // Return predictions
+    // Imprimir la respuesta completa para inspeccionar su formato
+    console.log('Respuesta completa de Roboflow:', response.data);
+
+    // Verificar el campo de la imagen procesada
+    let processedImageUrl = response.data.visualization || response.data.image || null;
+    if (processedImageUrl && typeof processedImageUrl !== 'string') {
+      console.warn('processedImageUrl no es una cadena:', processedImageUrl);
+      processedImageUrl = null; // Si no es una cadena, lo ponemos como null
+    }
+
+    // Retornar tanto las predicciones como la URL de la imagen procesada (si existe)
+    return {
+      predictions: response.data.predictions || [],
+      processedImageUrl,
+    };
   } catch (error) {
-    console.error('Error analyzing image:', error.message);
+    console.error('Error analizando la imagen:', error.message);
     throw error;
   }
 };

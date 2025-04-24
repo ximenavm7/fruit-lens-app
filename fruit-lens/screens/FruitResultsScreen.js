@@ -7,6 +7,12 @@ const FruitResultsScreen = () => {
   const route = useRoute();
   const { fruit, status, className, daysLeft, recipes, imageUri } = route.params;
 
+  // Asegurarse de que recipes sea un arreglo
+  const safeRecipes = Array.isArray(recipes) ? recipes : ['No recipes available'];
+
+  // Verificar si imageUri es una cadena válida
+  const isValidImageUri = typeof imageUri === 'string' && imageUri.length > 0;
+
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
@@ -15,18 +21,23 @@ const FruitResultsScreen = () => {
           <Text style={styles.backText}>Go back</Text>
         </TouchableOpacity>
 
-        {/* Display the captured image */}
-        <Image source={{ uri: imageUri }} style={styles.image} />
+        {/* Display the processed image from Roboflow, or an error message if not available */}
+        {isValidImageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        ) : (
+          <Text style={styles.errorText}>Processed image not available</Text>
+        )}
 
         {/* Display the fruit name */}
-        <Text style={styles.title}>{fruit}</Text>
+        <Text style={styles.title}>{fruit || 'Unknown'}</Text>
 
-        {/* Info box with class, days left, and recipes */}
+        {/* Info box with class, state, time left, and recipes */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Class: {fruit} & {status}</Text>
-          <Text style={recipes.length > 0 ? styles.infoText : styles.infoText}>Time left: {daysLeft}</Text>
-          <Text style={recipes.length > 0 ? styles.infoText : styles.infoText}>Recipes:</Text>
-          {recipes.map((recipe, index) => (
+          <Text style={styles.infoText}>Class: {fruit || 'Unknown'}</Text>
+          <Text style={styles.infoText}>State: {status || 'Unknown'}</Text>
+          <Text style={styles.infoText}>Time left: {daysLeft || 'N/A'}</Text>
+          <Text style={styles.infoText}>Recipes:</Text>
+          {safeRecipes.map((recipe, index) => (
             <Text key={index} style={styles.recipeText}>• {recipe}</Text>
           ))}
         </View>
@@ -71,6 +82,12 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginTop: 10,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#D9534F',
+    marginTop: 10,
+    textAlign: 'center',
   },
   title: {
     fontSize: 24,
