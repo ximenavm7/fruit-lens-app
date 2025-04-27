@@ -5,29 +5,39 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const FruitResultsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { fruit, image, status, daysLeft, recipes } = route.params;
+  const { fruit, status, className, daysLeft, recipes, imageUri } = route.params;
+
+  // Asegurarse de que recipes sea un arreglo
+  const safeRecipes = Array.isArray(recipes) ? recipes : ['No recipes available'];
+
+  // Verificar si imageUri es una cadena válida
+  const isValidImageUri = typeof imageUri === 'string' && imageUri.length > 0;
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        {/* Botón "Go Back" con icono */}
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
           <Image source={require('../assets/logo.png')} style={styles.backIcon} />
           <Text style={styles.backText}>Go back</Text>
         </TouchableOpacity>
 
-        {/* Imagen de la fruta */}
-        <Image source={image} style={styles.image} />
+        {/* Display the processed image from Roboflow, or an error message if not available */}
+        {isValidImageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        ) : (
+          <Text style={styles.errorText}>Processed image not available</Text>
+        )}
 
-        {/* Nombre de la fruta */}
-        <Text style={styles.title}>{fruit}</Text>
+        {/* Display the fruit name */}
+        <Text style={styles.title}>{fruit || 'Unknown'}</Text>
 
-        {/* Caja con la información del estado */}
+        {/* Info box with class, state, time left, and recipes */}
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>State: {status}</Text>
-          <Text style={styles.infoText}>Time left: {daysLeft} days</Text>
+          <Text style={styles.infoText}>Class: {fruit || 'Unknown'}</Text>
+          <Text style={styles.infoText}>State: {status || 'Unknown'}</Text>
+          <Text style={styles.infoText}>Time left: {daysLeft || 'N/A'}</Text>
           <Text style={styles.infoText}>Recipes:</Text>
-          {recipes.map((recipe, index) => (
+          {safeRecipes.map((recipe, index) => (
             <Text key={index} style={styles.recipeText}>• {recipe}</Text>
           ))}
         </View>
@@ -72,6 +82,12 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginTop: 10,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#D9534F',
+    marginTop: 10,
+    textAlign: 'center',
   },
   title: {
     fontSize: 24,

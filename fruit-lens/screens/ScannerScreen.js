@@ -7,14 +7,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 const ScannerScreen = () => {
   const navigation = useNavigation();
   const cameraRef = useRef(null);
-  const [permission, requestPermission] = useCameraPermissions(); // Hook para manejar permisos
-  const [cameraType, setCameraType] = useState('back'); // 'back' o 'front'
+  const [permission, requestPermission] = useCameraPermissions();
+  const [cameraType, setCameraType] = useState('back');
   const [isScanning, setIsScanning] = useState(true);
 
-  // Solicitar permisos de la cámara al montar el componente
   useEffect(() => {
     if (!permission) {
-      // Permisos aún no han sido solicitados
       requestPermission();
     } else if (!permission.granted) {
       alert('Camera permission is required to scan fruits.');
@@ -22,23 +20,13 @@ const ScannerScreen = () => {
     }
   }, [permission, requestPermission, navigation]);
 
-  // Función para tomar una foto y simular la detección de frutas
   const takePicture = async () => {
     if (cameraRef.current && isScanning) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-        // Aquí procesamos la foto con visión artificial más adelante
-        // Por ahora, simulamos una detección
-        const detectedFruit = {
-          fruit: 'Apple',
-          image: require('../assets/manzana.png'),
-          status: 'Ripe',
-          daysLeft: 5,
-          recipes: ['Apple pie', 'Apple slices', 'Apple juice'],
-        };
-
-        setIsScanning(false); // Detener el escaneo tras la detección
-        navigation.navigate('FruitResults', detectedFruit);
+        setIsScanning(false);
+        // Navigate to ProcessingScreen with the image URI
+        navigation.navigate('Processing', { imageUri: photo.uri });
       } catch (error) {
         console.error('Error taking photo:', error);
         navigation.navigate('ErrorResults');
@@ -46,7 +34,6 @@ const ScannerScreen = () => {
     }
   };
 
-  // Si no hay permisos, mostrar mensaje
   if (!permission) {
     return <View style={styles.container}><Text>Requesting camera permission...</Text></View>;
   }
@@ -59,24 +46,20 @@ const ScannerScreen = () => {
       <CameraView
         ref={cameraRef}
         style={styles.camera}
-        facing={cameraType} // Usar 'facing' en lugar de 'type'
+        facing={cameraType}
       />
       <View style={styles.innerContainer}>
-        {/* Botón "Go Back" */}
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
           <Image source={require('../assets/logo.png')} style={styles.backIcon} />
           <Text style={styles.backText}>Go back</Text>
         </TouchableOpacity>
 
-        {/* Texto "Scanning..." */}
         <Text style={styles.scanningText}>Scanning...</Text>
 
-        {/* Botón para abrir la galería */}
         <TouchableOpacity onPress={() => navigation.navigate('Gallery')} style={styles.galleryButton}>
           <Image source={require('../assets/gallery-icon.png')} style={styles.galleryIcon} />
         </TouchableOpacity>
 
-        {/* Botón para cambiar el tipo de cámara (trasera/frontal) */}
         <TouchableOpacity
           onPress={() => setCameraType(cameraType === 'back' ? 'front' : 'back')}
           style={styles.flipButton}
@@ -84,7 +67,6 @@ const ScannerScreen = () => {
           <MaterialIcons name="flip-camera-ios" size={30} color="#fff" />
         </TouchableOpacity>
 
-        {/* Botón para tomar la foto */}
         <TouchableOpacity onPress={takePicture} style={styles.scanButton}>
           <MaterialIcons name="camera" size={30} color="#fff" />
         </TouchableOpacity>
