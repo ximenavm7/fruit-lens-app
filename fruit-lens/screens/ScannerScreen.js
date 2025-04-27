@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const ScannerScreen = () => {
   const navigation = useNavigation();
@@ -23,14 +25,50 @@ const ScannerScreen = () => {
   const takePicture = async () => {
     if (cameraRef.current && isScanning) {
       try {
-        const photo = await cameraRef.current.takePictureAsync();
+        const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
         setIsScanning(false);
-        // Navigate to ProcessingScreen with the image URI
-        navigation.navigate('Processing', { imageUri: photo.uri });
+
+        const manipulatedImage = await ImageManipulator.manipulateAsync(
+          photo.uri,
+          [{ resize: { width: 1000 } }],
+          { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+        );
+
+        navigation.navigate('Processing', { imageUri: manipulatedImage.uri });
       } catch (error) {
         console.error('Error taking photo:', error);
         navigation.navigate('ErrorResults');
       }
+    }
+  };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permiso requerido',
+        'Se necesita acceso a la galería para seleccionar fotos.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      exif: false,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const imageUri = result.assets[0].uri;
+
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [{ resize: { width: 1000 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      navigation.navigate('Processing', { imageUri: manipulatedImage.uri });
     }
   };
 
@@ -56,7 +94,7 @@ const ScannerScreen = () => {
 
         <Text style={styles.scanningText}>Scanning...</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Gallery')} style={styles.galleryButton}>
+        <TouchableOpacity onPress={pickImage} style={styles.galleryButton}>
           <Image source={require('../assets/gallery-icon.png')} style={styles.galleryIcon} />
         </TouchableOpacity>
 

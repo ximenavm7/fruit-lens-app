@@ -1,5 +1,3 @@
-
-
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import { Platform } from 'react-native';
@@ -34,19 +32,14 @@ const analyzeFruitImage = async (imageUri) => {
       },
     });
 
-    // Imprimir la respuesta completa para inspeccionar su formato
-    console.log('Respuesta completa de Roboflow:', response.data);
-
-    // Verificar el campo de la imagen procesada
+    const predictions = response.data.predictions || [];
     let processedImageUrl = response.data.visualization || response.data.image || null;
     if (processedImageUrl && typeof processedImageUrl !== 'string') {
-      console.warn('processedImageUrl no es una cadena:', processedImageUrl);
-      processedImageUrl = null; // Si no es una cadena, lo ponemos como null
+      processedImageUrl = null;
     }
 
-    // Retornar tanto las predicciones como la URL de la imagen procesada (si existe)
     return {
-      predictions: response.data.predictions || [],
+      predictions,
       processedImageUrl,
     };
   } catch (error) {
