@@ -5,8 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 import ScannerScreen from './screens/ScannerScreen';
 import FruitResultsScreen from './screens/FruitResultsScreen';
 import ErrorResultsScreen from './screens/ErrorResultsScreen';
-import ProcessingScreen from './screens/ProcessingScreen'; // Add this
-//import GalleryScreen from './screens/GalleryScreen';
+import ProcessingScreen from './screens/ProcessingScreen';
 
 const Stack = createStackNavigator();
 

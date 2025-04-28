@@ -8,12 +8,11 @@ const ProcessingScreen = () => {
   const route = useRoute();
   const { imageUri } = route.params;
 
-  // Recetas predefinidas para cada fruta
   const recipesByFruit = {
     Apple: ['Apple pie', 'Apple smoothie', 'Caramel apples'],
     Banana: ['Banana bread', 'Banana smoothie', 'Banana pancakes'],
     Orange: ['Orange juice', 'Orange honey lemon slices', 'Orange pie'],
-    // Agrega más frutas si es necesario
+    Pear: ['Pear salad', 'Pear & Ginger Sparkler', 'Cranberry Pear Tart'],
   };
 
   useEffect(() => {
@@ -21,29 +20,24 @@ const ProcessingScreen = () => {
       try {
         const { predictions, processedImageUrl } = await analyzeFruitImage(imageUri);
 
-        // Verificar si hay predicciones
         if (!predictions || predictions.length === 0) {
           navigation.navigate('ErrorResults', { error: 'No fruit was detected in the image' });
           return;
         }
 
-        // Tomar la primera predicción
         const prediction = predictions[0];
 
-        // Verificar si tiene la clave 'class'
         if (!prediction.class || !prediction.confidence) {
           navigation.navigate('ErrorResults', { error: 'Invalid prediction format received from the model' });
           return;
         }
 
-        // Extraer fruit y status desde la clave 'class' (ejemplo: "Apple Fresh")
         const [fruit, status] = prediction.class.split(' ');
         if (!fruit || !status) {
           navigation.navigate('ErrorResults', { error: 'Could not parse fruit type or status from prediction' });
           return;
         }
 
-        // Asignar daysLeft según el estado
         let daysLeft;
         switch (status.toLowerCase()) {
           case 'fresh':
@@ -59,19 +53,13 @@ const ProcessingScreen = () => {
             daysLeft = '0 days';
             break;
           default:
-            daysLeft = 'N/A'; // Para estados desconocidos
+            daysLeft = 'N/A';
         }
 
-        // Obtener recetas basadas en el tipo de fruta (o un valor por defecto si no hay recetas)
         const recipes = recipesByFruit[fruit] || ['No recipes available'];
-
-        // Calcular className como la concatenación de fruit y status
         const className = `${fruit} & ${status}`;
-
-        // Asegurarse de que imageUri sea una cadena válida
         const finalImageUri = processedImageUrl && typeof processedImageUrl === 'string' ? processedImageUrl : imageUri;
 
-        // Preparar los datos para FruitResultsScreen
         const result = {
           imageUri: finalImageUri,
           fruit,
@@ -81,12 +69,8 @@ const ProcessingScreen = () => {
           recipes,
         };
 
-        // Imprimir los datos para depuración
-        console.log('Datos pasados a FruitResultsScreen:', result);
-
         navigation.navigate('FruitResults', result);
       } catch (error) {
-        console.error('Error processing the image:', error.message);
         navigation.navigate('ErrorResults', { error: error.message });
       }
     };
@@ -114,4 +98,5 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
 export default ProcessingScreen;
