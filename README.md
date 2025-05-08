@@ -8,7 +8,7 @@ Once you've cloned the repository, you must follow these steps to run the app in
  ```
     npm install
   ```
-* Once the libraries have been installed, execute `npx expo start` to run the app
+* Once the libraries have been installed, execute `npm start` to run the app
 * Scan the QR code with Expo Go
 
 That's it! You are now able to run our project :grin: :tada:
