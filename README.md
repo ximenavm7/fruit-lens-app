@@ -3,14 +3,14 @@ Fruit-Lens is a mobile application built with React Native and Expo that allows 
 The project is part of a GitHub repository with three main folders: documentation, fruit-lens, and prototype. This README provides an overview of the application, setup instructions, usage details, and the repository's file structure.
 
 ## Table of Contents
-* <a href="features">Features</a>
-* <a href="installation">Installation</a>
-* <a href="usage">Usage</a>
-* <a href="repository-structure">Repository Structure</a>
-* <a href="prototype">Prototype</a>
-* <a href="dependencies">Dependencies</a>
-* <a href="contributing">Contributing</a>
-* <a href="license">License</a>
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Repository Structure](#repository-structure)
+* [Prototype](#prototype)
+* [Dependencies](#dependencies)
+* [Contributing](#contributing)
+* [License](#license)
 
 <h2 id="features">Features</h2>
 
